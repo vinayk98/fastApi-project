@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from db.hash import Hash
@@ -19,15 +20,15 @@ def get_user(db: Session, id: int):
     if user:
         return user
     else:
-        return {"error": "User not found"} 
-
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
+    
 def get_all_users(db: Session):
     return db.query(DbUser).all()
 
 def update_user(db: Session, id: int, request: UserBase):
     user = db.query(DbUser).filter(DbUser.id == id).first()
-    if not user:
-        return None
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
     user.username = request.username
     user.email = request.email
     user.password = Hash.bcrypt(request.password)
@@ -43,4 +44,4 @@ def delete_user(db: Session, id: int):
         db.commit()
         return {"message": "User deleted successfully"}
     else:
-        return {"error": "User not found"}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
