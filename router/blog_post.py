@@ -41,7 +41,7 @@ def create_comment(blog: BlogPost,
  alias="commentId",
  deprecated=True),
  v: Optional[List[str]] = Query(["1", "2", "3"]),
- content: str = Body(Ellipsis, min_length=10, max_length=20, pattern="^[a-z\s]*$"),
+ content: str = Body(Ellipsis, min_length=10, max_length=20, pattern=r"^[a-z\s]*$"),
  ):
     """
     This API endpoint creates a new comment for a specific blog post with the provided title, content, publication status, and version.
