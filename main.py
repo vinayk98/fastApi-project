@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from exceptions import StoryException
-from router import blog_get, blog_post, user, product, articles
+from router import blog_get, blog_post, user, product, articles, file
 from auth import authentication
 from db import models
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import engine
+from fastapi.staticfiles import StaticFiles
 
 
 #instance to represent the FastAPI application
@@ -16,6 +17,7 @@ app.include_router(user.router) #include the router from user.py
 app.include_router(product.router) #include the router from product.py
 app.include_router(articles.router) #include the router from articles.py
 app.include_router(authentication.router)
+app.include_router(file.router)
 
 #used for custom exception handling in FastAPI. It allows you to define a function that will be called whenever a specific exception is raised in your application.
 @app.exception_handler(StoryException)
@@ -29,3 +31,5 @@ def story_exception_handler(request: Request, exc: StoryException):
 models.Base.metadata.create_all(engine) #create the database tables based on the models defined in db/models.py
 origins = ["http://localhost:3000"] #define the allowed origins for CORS (Cross-Origin Resource Sharing) requests
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"]) #add CORS middleware to the application
+# Make files inside the "files" folder accessible directly through the browser
+app.mount("/files", StaticFiles(directory="files"), name="files")

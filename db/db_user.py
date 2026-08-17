@@ -22,6 +22,13 @@ def get_user(db: Session, id: int):
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
     
+def get_user_by_username(db: Session, username: str):
+    user = db.query(DbUser).filter(DbUser.username == username).first()
+    if user:
+        return user
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with username {username} not found")
+    
 def get_all_users(db: Session):
     return db.query(DbUser).all()
 
