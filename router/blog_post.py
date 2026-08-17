@@ -1,4 +1,3 @@
-from tkinter import Image
 from typing import List, Optional
 from fastapi import APIRouter, Query, Body
 from pydantic import BaseModel
